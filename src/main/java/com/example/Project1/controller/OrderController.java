@@ -19,7 +19,6 @@ import com.example.Project1.model.Order;
 import com.example.Project1.model.User;
 import com.example.Project1.service.CartItemService;
 import com.example.Project1.service.OrderService;
-import com.example.Project1.service.ShipperOrderService;
 import com.example.Project1.service.UserService;
 
 @Controller
@@ -34,9 +33,6 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private ShipperOrderService shipperOrderService;
     
 
     @GetMapping("")
