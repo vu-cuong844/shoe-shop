@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bảng Kết Hợp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h3 class="mb-4">Bảng Dữ Liệu Kết Hợp</h3>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="mb-3">
+            <input type="text" id="globalSearch" class="form-control" placeholder="Tìm kiếm toàn bảng...">
+        </div>
+
+        <!-- Bảng -->
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>STT</th>
+                    <th>
+
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Tên
+                            </button>
+                            <ul class="dropdown-menu" id="nameFilter"></ul>
+                        </div>
+                    </th>
+                    <th>
+
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Email
+                            </button>
+                            <ul class="dropdown-menu" id="emailFilter"></ul>
+                        </div>
+                    </th>
+                    <th>
+
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Vai trò
+                            </button>
+                            <ul class="dropdown-menu" id="roleFilter"></ul>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="dataTable">
+                <tr>
+                    <td>1</td>
+                    <td>Nguyễn Văn A</td>
+                    <td>a@example.com</td>
+                    <td>Admin</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Trần Thị B</td>
+                    <td>b@example.com</td>
+                    <td>User</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Phạm Văn C</td>
+                    <td>c@example.com</td>
+                    <td>User</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Hoàng Thị D</td>
+                    <td>d@example.com</td>
+                    <td>Admin</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const dataTable = document.getElementById("dataTable");
+        const globalSearch = document.getElementById("globalSearch");
+        const nameFilter = document.getElementById("nameFilter");
+        const emailFilter = document.getElementById("emailFilter");
+        const roleFilter = document.getElementById("roleFilter");
+
+        // Lấy dữ liệu cột
+        const getColumnData = (colIndex) => {
+            const rows = Array.from(dataTable.getElementsByTagName("tr"));
+            const uniqueData = new Set();
+            rows.forEach(row => {
+                const cell = row.getElementsByTagName("td")[colIndex];
+                if (cell) uniqueData.add(cell.textContent.trim());
+            });
+            return Array.from(uniqueData);
+        };
+
+        // Tạo tùy
+        const createFilterOptions = (filterElement, colIndex) => {
+            const columnData = getColumnData(colIndex);
+            filterElement.innerHTML = `
+                <li><a class="dropdown-item" href="#" data-filter="all">Tất cả</a></li>
+            `;
+            columnData.forEach(item => {
+                filterElement.innerHTML += `
+                    <li><a class="dropdown-item" href="#" data-filter="${item}">${item}</a></li>
+                `;
+            });
+        };
+
+        // Áp
+        const applyFilter = (colIndex, filterValue) => {
+            const rows = Array.from(dataTable.getElementsByTagName("tr"));
+            rows.forEach(row => {
+                const cell = row.getElementsByTagName("td")[colIndex];
+                if (cell) {
+                    if (filterValue === "all" || cell.textContent.trim() === filterValue) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+        };
+
+        // Tìm kiếm toàn bảng
+        globalSearch.addEventListener("input", () => {
+            const filterValue = globalSearch.value.toLowerCase();
+            const rows = Array.from(dataTable.getElementsByTagName("tr"));
+            rows.forEach(row => {
+                const cells = Array.from(row.getElementsByTagName("td"));
+                if (cells.some(cell => cell.textContent.toLowerCase().includes(filterValue))) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+        // Khởi tạ
+        createFilterOptions(nameFilter, 1);
+        createFilterOptions(emailFilter, 2);
+        createFilterOptions(roleFilter, 3);
+
+        // Thêm sự từng cột
+        [nameFilter, emailFilter, roleFilter].forEach((filterElement, colIndex) => {
+            filterElement.addEventListener("click", (event) => {
+                if (event.target.tagName === "A") {
+                    const filterValue = event.target.getAttribute("data-filter");
+                    applyFilter(colIndex + 1, filterValue);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
